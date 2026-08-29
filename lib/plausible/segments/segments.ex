@@ -113,13 +113,13 @@ defmodule Plausible.Segments do
               ),
             pos:
               fragment(
-                "position(lower(?) IN lower(?)) AS pos",
+                "instr(lower(?), lower(?)) AS pos",
                 ^input,
                 segment.name
               ),
             len_diff: fragment("abs(length(?) - length(?)) AS len_diff", segment.name, ^input)
           },
-          where: fragment("? ilike ?", segment.name, ^"%#{input}%"),
+          where: fragment("lower(?) LIKE lower(?)", segment.name, ^"%#{input}%"),
           order_by: fragment("match_rank asc, pos asc, len_diff asc, updated_at desc")
         )
       end

@@ -8,7 +8,9 @@ config :bcrypt_elixir, :log_rounds, 4
 
 config :plausible, Plausible.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: System.schedulers_online()
+  pool_size: 10,
+  journal_mode: :wal,
+  busy_timeout: 5000
 
 config :plausible, Plausible.ClickhouseRepo,
   loggers: [Ecto.LogEntry],

@@ -62,8 +62,8 @@ defmodule Plausible.Auth.UserSessions do
 
     @spec revoke_sso_by_id(Teams.Team.t(), pos_integer()) :: :ok
     def revoke_sso_by_id(team, session_id) do
-      {_, tokens} =
-        Repo.delete_all(
+      tokens =
+        Repo.all(
           from us in Auth.UserSession,
             inner_join: u in assoc(us, :user),
             inner_join: tm in assoc(u, :team_memberships),
@@ -73,6 +73,10 @@ defmodule Plausible.Auth.UserSessions do
             where: tm.team_id == ^team.id,
             select: us.token
         )
+
+      if tokens != [] do
+        Repo.delete_all(from(us in Auth.UserSession, where: us.id == ^session_id))
+      end
 
       case tokens do
         [token] ->

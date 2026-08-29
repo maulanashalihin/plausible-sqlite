@@ -602,7 +602,7 @@ defmodule Plausible.Teams.Billing do
 
       props_usage_q =
         from s in Plausible.Site,
-          where: s.id in ^site_ids and fragment("cardinality(?) > 0", s.allowed_event_props)
+          where: s.id in ^site_ids and fragment("json_array_length(?) > 0", s.allowed_event_props)
 
       funnels_usage_q = from f in "funnels", where: f.site_id in ^site_ids
 

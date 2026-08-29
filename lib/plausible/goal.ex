@@ -30,7 +30,7 @@ defmodule Plausible.Goal do
       field :funnels, {:array, :map}, virtual: true, default: []
     end
 
-    field :custom_props, :map, default: %{}
+    field :custom_props, Plausible.Ecto.Types.Json, default: %{}
 
     belongs_to :site, Plausible.Site
 

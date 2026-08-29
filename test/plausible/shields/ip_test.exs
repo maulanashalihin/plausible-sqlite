@@ -143,7 +143,7 @@ defmodule Plausible.Shields.IPTest do
 
       assert count_ip_rules(site) == 1
       assert [^rule] = list_ip_rules(site)
-      assert rule.inet == %Postgrex.INET{address: {127, 0, 0, 1}, netmask: 32}
+      assert rule.inet == "127.0.0.1"
       assert rule.description == "Localhost"
       assert rule.action == :deny
       refute rule.from_cache?

@@ -634,7 +634,7 @@ defmodule Plausible.Auth.SSOTest do
         Repo.update_all(
           from(t in Teams.Team,
             where: t.id == ^team.id,
-            update: [set: [policy: fragment("'{}'::json")]]
+            update: [set: [policy: fragment("'{}'")]]
           ),
           []
         )
@@ -817,7 +817,7 @@ defmodule Plausible.Auth.SSOTest do
         Repo.update_all(
           from(t in Teams.Team,
             where: t.id == ^team.id,
-            update: [set: [policy: fragment("'{}'::json")]]
+            update: [set: [policy: fragment("'{}'")]]
           ),
           []
         )

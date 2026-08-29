@@ -22,8 +22,8 @@ defmodule Plausible.Audit.Entry do
     field :name, :string
     field :entity, :string
     field :entity_id, :string
-    field :meta, :map
-    field :change, :map, default: %{}
+    field :meta, Plausible.Ecto.Types.Json
+    field :change, Plausible.Ecto.Types.Json, default: %{}
     # default 0 is still useful in tests?
     field :user_id, :integer, default: 0
     field :team_id, :integer, default: 0

@@ -14,7 +14,7 @@ defmodule Plausible.Segments.Segment do
   schema "segments" do
     field :name, :string
     field :type, Ecto.Enum, values: @segment_types
-    field :segment_data, :map
+    field :segment_data, Plausible.Ecto.Types.Json
 
     # owner ID can be null (aka segment is dangling) when the original owner is deassociated from the site
     # the segment is dangling until another user edits it: the editor becomes the new owner

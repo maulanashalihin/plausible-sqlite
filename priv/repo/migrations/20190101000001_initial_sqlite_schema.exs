@@ -166,7 +166,7 @@ defmodule Plausible.Repo.Migrations.InitialSqliteSchema do
       add :scroll_threshold, :integer, default: -1
       add :display_name, :string
       add :currency, :string
-      add :custom_props, :map, default: "%{}"
+      add :custom_props, :string, default: "{}"
       add :site_id, references(:sites, on_delete: :delete_all), null: false
 
       timestamps()
@@ -536,7 +536,7 @@ defmodule Plausible.Repo.Migrations.InitialSqliteSchema do
     create table(:segments) do
       add :name, :string, null: false
       add :type, :string, null: false, default: "personal"
-      add :segment_data, :map, null: false
+      add :segment_data, :string, null: false
       add :site_id, references(:sites, on_delete: :delete_all), null: false
       add :owner_id, references(:users, on_delete: :nilify_all)
 
@@ -653,8 +653,8 @@ defmodule Plausible.Repo.Migrations.InitialSqliteSchema do
       add :name, :string, null: false
       add :entity, :string, null: false
       add :entity_id, :string, null: false
-      add :meta, :map, default: "%{}"
-      add :change, :map, default: "%{}"
+      add :meta, :string, default: "{}"
+      add :change, :string, default: "{}"
       add :user_id, :integer, default: 0
       add :team_id, :integer, default: 0
       add :datetime, :naive_datetime, null: false

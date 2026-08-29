@@ -9,6 +9,7 @@ defmodule Plausible.Factory do
   def team_factory do
     %Plausible.Teams.Team{
       name: Plausible.Teams.default_name(),
+      identifier: Ecto.UUID.generate(),
       trial_expiry_date: Date.utc_today() |> Date.shift(day: 30),
       setup_complete: true,
       setup_at: NaiveDateTime.utc_now()
