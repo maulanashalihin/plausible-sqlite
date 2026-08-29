@@ -8,7 +8,7 @@ FROM node:24.17.0-alpine3.23@sha256:7c70d1235c0b4c2bc9eeed5393d19f1bbdde6885ba0d
 #### Builder
 FROM hexpm/elixir:1.20.2-erlang-28.5.0.3-alpine-3.23.5@sha256:6f03034e254126f063959873d8d3b811ee92abaabab27b62c53982c4a1034e39 AS buildcontainer
 
-ARG MIX_ENV=ce
+ARG MIX_ENV=ee
 
 # preparation
 ENV MIX_ENV=$MIX_ENV
@@ -69,7 +69,7 @@ LABEL maintainer="plausible.io <hello@plausible.io>"
 ARG BUILD_METADATA={}
 ENV BUILD_METADATA=$BUILD_METADATA
 ENV LANG=C.UTF-8
-ARG MIX_ENV=ce
+ARG MIX_ENV=ee
 ENV MIX_ENV=$MIX_ENV
 
 RUN adduser -S -H -u 999 -G nogroup plausible
