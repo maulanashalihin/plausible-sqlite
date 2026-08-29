@@ -86,9 +86,12 @@ IO.puts("ADMIN_USER_IDS=#{admin.id}")
 
 Then start with `ADMIN_USER_IDS=<id> mix phx.server`.
 
-## Docker
+## Deploy
 
-```bash
+- **Docker**: see [## Docker](#docker) below.
+- **Non-Docker (bare metal, systemd + Nginx)**: see [GUIDE_NON_DOCKER.md](GUIDE_NON_DOCKER.md) — production setup used at `ps.maulanabuilds.com`.
+
+## Docker
 docker build -t plausible-sqlite .
 
 docker run -p 8000:8000 \
