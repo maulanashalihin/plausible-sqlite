@@ -1,19 +1,19 @@
 # GUIDE: Deploy Plausible SQLite (Non-Docker) — VPS Bare Metal
 
-Deploy `plausible-sqlite` tanpa Docker, pakai `systemd` + `mix phx.server` + Nginx/Cloudflare. Ini yang jalan di `ps.maulanabuilds.com`.
+Deploy `plausible-sqlite` without Docker using `systemd` + `mix phx.server` + Nginx/Cloudflare. This is the setup running at `ps.maulanabuilds.com`.
 
-## 1. Prerequsites
+## 1. Prerequisites
 
 ```bash
 # OS: Ubuntu 22.04/24.04
 erl -version        # Erlang/OTP 28+
 elixir -v           # Elixir 1.18+
-node -v             # Node 20+ (untuk assets)
+node -v             # Node 20+ (for assets)
 clickhouse --version # ClickHouse 24+
 sqlite3 --version
 ```
 
-Install jika belum:
+Install if missing:
 ```bash
 # Elixir via asdf
 asdf plugin add erlang && asdf plugin add elixir && asdf install
@@ -21,7 +21,7 @@ asdf plugin add erlang && asdf plugin add elixir && asdf install
 nvm install 20
 # ClickHouse
 curl https://clickhouse.com/|sh && ./clickhouse install
-# exqlite butuh libsqlite3-dev
+# exqlite requires libsqlite3-dev
 sudo apt install libsqlite3-dev inotify-tools
 ```
 
@@ -33,7 +33,7 @@ cd /opt/plausible-sqlite
 
 mix deps.get
 npm install --prefix assets
-mix assets.build   # atau npm run deploy --prefix assets
+mix assets.build   # or npm run deploy --prefix assets
 mix download_country_database  # GeoIP
 ```
 
@@ -41,17 +41,17 @@ mix download_country_database  # GeoIP
 
 ```bash
 # config: /etc/clickhouse-server/config.xml & users.xml
-# Buat DB & tabel:
+# Create DB & tables:
 clickhouse-client --query "CREATE DATABASE IF NOT EXISTS plausible_events_db"
-MIX_ENV=dev mix clickhouse.migrate  # atau mix ecto.migrate (jalanin CH migration)
+MIX_ENV=dev mix clickhouse.migrate  # or mix ecto.migrate (runs CH migrations)
 
-# URL yang dipakai app:
+# URL used by the app:
 # CLICKHOUSE_DATABASE_URL=http://default:plausible@127.0.0.1:8124/plausible_events_db
 ```
 
-## 4. Env Vars (wajib)
+## 4. Env Vars (required)
 
-File systemd pakai `Environment=` langsung (alternatif: `/etc/plausible/env`):
+Systemd uses `Environment=` directly (alternative: `/etc/plausible/env`):
 
 ```
 MIX_ENV=dev
@@ -60,12 +60,12 @@ LISTEN_IP=0.0.0.0
 BASE_URL=https://ps.maulanabuilds.com
 DATABASE_PATH=/opt/plausible-sqlite/plausible_dev.sqlite3
 CLICKHOUSE_DATABASE_URL=http://default:plausible@127.0.0.1:8124/plausible_events_db
-SECRET_KEY_BASE=$(openssl rand -base64 48)  # generate sekali, jangan ganti
+SECRET_KEY_BASE=$(openssl rand -base64 48)  # generate once, never rotate
 TOTP_VAULT_KEY=$(openssl rand -base64 32)
-DISABLE_CRON=true  # kalau 1 node, cron di app cukup
+DISABLE_CRON=true  # single-node: in-app cron is enough
 ```
 
-Generate secret:
+Generate secrets:
 ```bash
 openssl rand -base64 48
 openssl rand -base64 32 | tr -d '\n'
@@ -77,11 +77,11 @@ openssl rand -base64 32 | tr -d '\n'
 MIX_ENV=dev mix ecto.create
 MIX_ENV=dev mix ecto.migrate
 
-# Seed optional (user@plausible.test / plausible)
+# Optional seed (user@plausible.test / plausible)
 MIX_ENV=dev mix run priv/repo/seeds.exs
 ```
 
-> **JANGAN** `sqlite3 ... INSERT` raw ke `enterprise_plans/subscriptions` — `team_member_limit` harus `-1` (bukan `"unlimited"`), `features` harus lowercase JSON `["goals","props",...]`. Pakai `mix run` + `Repo.insert` (lihat `README.md` admin account & `.llm-wiki/...bypasses-ecto-dump.md`).
+> **DO NOT** `sqlite3 ... INSERT` raw into `enterprise_plans/subscriptions` — `team_member_limit` must be `-1` (not `"unlimited"`), `features` must be lowercase JSON `["goals","props",...]`. Use `mix run` + `Repo.insert` (see `README.md` admin account & `.llm-wiki/...bypasses-ecto-dump.md`).
 
 ## 6. systemd Service (production)
 
@@ -119,7 +119,7 @@ WantedBy=multi-user.target
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now plausible-sqlite
-sudo journalctl -u plausible-sqlite -f  # cek log
+sudo journalctl -u plausible-sqlite -f  # check logs
 ```
 
 Upgrade:
@@ -132,7 +132,7 @@ sudo systemctl restart plausible-sqlite
 
 ## 7. Nginx + Cloudflare (HTTPS)
 
-App listen `127.0.0.1:8001` atau `0.0.0.0:8001`. Pasang Nginx reverse proxy:
+App listens on `127.0.0.1:8001` or `0.0.0.0:8001`. Add Nginx reverse proxy:
 
 ```nginx
 server {
@@ -146,20 +146,20 @@ server {
 }
 ```
 
-Cloudflare: `SSL Full`, `BASE_URL=https://...` wajib `https`. `SECRET_KEY_BASE` jangan ganti setelah DB terisi (session invalid).
+Cloudflare: `SSL Full`, `BASE_URL=https://...` must be `https`. Do not rotate `SECRET_KEY_BASE` after DB is populated (invalidates sessions).
 
-## 8. Verifikasi
+## 8. Verification
 
 ```bash
 curl -I https://ps.maulanabuilds.com/sites  # 302 -> login
-MIX_ENV=dev mix run -e 'IO.inspect Repo.all(Team)'  # cek team
+MIX_ENV=dev mix run -e 'IO.inspect Repo.all(Team)'  # check team
 sqlite3 plausible_dev.sqlite3 "SELECT trial_expiry_date FROM teams;"
 ```
 
-Error umum:
-- `eaddrinuse` -> `PORT` bentrok, ganti `PORT` di service.
-- `ArgumentError binary_to_integer("unlimited")` -> `enterprise_plans.team_member_limit` harus `-1`.
-- `ArgumentError not a tuple` di `FeatureArray` -> `features` harus lowercase JSON.
+Common errors:
+- `eaddrinuse` -> `PORT` conflict, change `PORT` in service.
+- `ArgumentError binary_to_integer("unlimited")` -> `enterprise_plans.team_member_limit` must be `-1`.
+- `ArgumentError not a tuple` in `FeatureArray` -> `features` must be lowercase JSON.
 
 ## 9. Backup
 
@@ -172,4 +172,4 @@ clickhouse-client --query "BACKUP TABLE plausible_events_db.events_v2 TO Disk('b
 
 ---
 
-**Sumber**: service yang jalan di `vps-5624be8b` (`/opt/plausible-sqlite`, `systemctl cat plausible-sqlite`), `config/runtime.exs`.
+**Source**: service running on `vps-5624be8b` (`/opt/plausible-sqlite`, `systemctl cat plausible-sqlite`), `config/runtime.exs`.
