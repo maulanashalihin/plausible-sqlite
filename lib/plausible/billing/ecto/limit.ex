@@ -15,6 +15,8 @@ defmodule Plausible.Billing.Ecto.Limit do
   def cast(other), do: Ecto.Type.cast(:integer, other)
 
   def load(-1), do: {:ok, :unlimited}
+  def load("-1"), do: {:ok, :unlimited}
+  def load(other) when is_binary(other), do: Ecto.Type.load(:integer, String.to_integer(other))
   def load(other), do: Ecto.Type.load(:integer, other)
 
   def dump(:unlimited), do: {:ok, -1}
