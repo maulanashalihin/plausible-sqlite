@@ -9,15 +9,16 @@
 Fork of [Plausible Analytics](https://plausible.io/) with **SQLite replacing PostgreSQL** for OLTP data. ClickHouse remains for analytics (OLAP). All Enterprise Edition features included.
 ## Why this fork?
 
-Upstream Plausible butuh **PostgreSQL + ClickHouse** — 2 DB, setup berat buat self-host di VPS kecil.
+Upstream Plausible requires **PostgreSQL + ClickHouse** — two databases, heavy to self-host on a small VPS.
 
-Fork ini **ganti PostgreSQL -> SQLite** biar:
-- **Deploy gampang**: 1 binary + 1 file `plausible.db`, gak perlu maintain Postgres.
-- **Resource hemat**: cocok VPS 1-2GB RAM / non-Docker bare metal (`GUIDE_NON_DOCKER.md`).
-- **Backup/simple ops**: copy file SQLite, gak perlu `pg_dump`.
-- **Tetap EE features**: funnels, SSO, revenue goals, consolidated views (upstream CE gak ada).
+This fork **replaces PostgreSQL with SQLite** to:
+- **Simplify deploy**: single binary + single `plausible.db` file, no Postgres to maintain.
+- **Reduce resources**: fits 1-2GB VPS / bare-metal non-Docker (`GUIDE_NON_DOCKER.md`).
+- **Simplify ops/backup**: copy the SQLite file, no `pg_dump`.
+- **Keep EE features**: funnels, SSO, revenue goals, consolidated views (not in upstream CE).
 
-ClickHouse tetap dipakai buat analytics (OLAP), SQLite cuma buat OLTP (users/teams/sites). Pattern migrasi lengkap di `.llm-wiki/`.
+ClickHouse is still used for analytics (OLAP); SQLite is only for OLTP (users/teams/sites). Migration patterns in `.llm-wiki/`.
+
 
 
 ## What changed from upstream
