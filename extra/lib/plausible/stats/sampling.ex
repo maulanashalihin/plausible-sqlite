@@ -123,6 +123,8 @@ defmodule Plausible.Stats.Sampling do
     estimate_by_filters(daily_traffic * duration, query.filters)
   end
 
+  defp days_of_traffic_in_30d_window(_now, nil), do: 1
+
   defp days_of_traffic_in_30d_window(now, native_stats_start_at) do
     days_from_stats_start = days_in_range(native_stats_start_at, DateTime.to_naive(now))
 
@@ -137,6 +139,8 @@ defmodule Plausible.Stats.Sampling do
   # Whole days spanned by the inclusive range [first, last]. Rounds the real
   # elapsed time so a range ending at 23:59:59 counts its final day in full,
   # rather than diffing the date parts (which undercounts by one).
+  defp days_in_range(nil, _last), do: 1
+  defp days_in_range(_first, nil), do: 1
   defp days_in_range(first, last) do
     round(NaiveDateTime.diff(last, first, :second) / @seconds_per_day)
   end
