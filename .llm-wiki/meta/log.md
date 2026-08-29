@@ -14,3 +14,18 @@
 ## [2026-08-29T06:11:41.141Z] observe
 - slug: "obs-2026-08-29-plausible-sqlite-fork-sqlite-schema-consolidation-and-asset-", title: "plausible-sqlite fork: SQLite schema consolidation and asset pipeline", relevance: "high"
 
+## [2026-08-29T08:04:03.280Z] observe
+- slug: "obs-2026-08-29-sqlite-wal-concurrency-single-writer-means-large-pools-cause", title: "SQLite WAL concurrency: single-writer means large pools cause Database busy"
+
+## [2026-08-29T08:46:53.058Z] observe
+- slug: "obs-2026-08-29-postgresql-any-not-supported-in-sqlite-use-like-on-json-stri", title: "PostgreSQL ANY() not supported in SQLite — use LIKE on JSON string"
+
+## [2026-08-29T08:46:57.627Z] observe
+- slug: "obs-2026-08-29-sqlite-returns-integers-as-strings-ecto-custom-types-need-bi", title: "SQLite returns integers as strings — Ecto custom types need binary load clauses"
+
+## [2026-08-29T08:47:04.903Z] observe
+- slug: "obs-2026-08-29-plausible-subscription-plan-ids-and-limits-choosing-wrong-pl", title: "Plausible subscription plan IDs and limits — choosing wrong plan causes 'exceeds limit' errors"
+
+## [2026-08-29T08:47:10.583Z] observe
+- slug: "obs-2026-08-29-exunit-max-cases-1-eliminates-sqlite-database-busy-errors-in", title: "ExUnit max_cases: 1 eliminates SQLite Database busy errors in parallel tests"
+

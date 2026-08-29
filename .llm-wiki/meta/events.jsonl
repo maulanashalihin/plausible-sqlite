@@ -2,3 +2,8 @@
 {"timestamp":"2026-08-29T05:36:59.628Z","kind":"retro","category":"uncategorized"}
 {"timestamp":"2026-08-29T05:37:16.849Z","kind":"observe","slug":"obs-2026-08-29-plausible-dual-database-architecture","title":"Plausible dual-database architecture"}
 {"timestamp":"2026-08-29T06:11:41.141Z","kind":"observe","slug":"obs-2026-08-29-plausible-sqlite-fork-sqlite-schema-consolidation-and-asset-","title":"plausible-sqlite fork: SQLite schema consolidation and asset pipeline","relevance":"high"}
+{"timestamp":"2026-08-29T08:04:03.280Z","kind":"observe","slug":"obs-2026-08-29-sqlite-wal-concurrency-single-writer-means-large-pools-cause","title":"SQLite WAL concurrency: single-writer means large pools cause Database busy"}
+{"timestamp":"2026-08-29T08:46:53.058Z","kind":"observe","slug":"obs-2026-08-29-postgresql-any-not-supported-in-sqlite-use-like-on-json-stri","title":"PostgreSQL ANY() not supported in SQLite — use LIKE on JSON string"}
+{"timestamp":"2026-08-29T08:46:57.627Z","kind":"observe","slug":"obs-2026-08-29-sqlite-returns-integers-as-strings-ecto-custom-types-need-bi","title":"SQLite returns integers as strings — Ecto custom types need binary load clauses"}
+{"timestamp":"2026-08-29T08:47:04.903Z","kind":"observe","slug":"obs-2026-08-29-plausible-subscription-plan-ids-and-limits-choosing-wrong-pl","title":"Plausible subscription plan IDs and limits — choosing wrong plan causes 'exceeds limit' errors"}
+{"timestamp":"2026-08-29T08:47:10.583Z","kind":"observe","slug":"obs-2026-08-29-exunit-max-cases-1-eliminates-sqlite-database-busy-errors-in","title":"ExUnit max_cases: 1 eliminates SQLite Database busy errors in parallel tests"}
