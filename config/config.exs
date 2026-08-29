@@ -68,7 +68,7 @@ config :plausible, Plausible.ClickhouseRepo, loggers: [Ecto.LogEntry]
 
 config :plausible, Plausible.Repo,
   timeout: 300_000,
-  pool_size: 10
+  pool_size: 5
 
 config :plausible, Plausible.Cache, enabled: true
 

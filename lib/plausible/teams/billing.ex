@@ -570,7 +570,7 @@ defmodule Plausible.Teams.Billing do
               exists(
                 from ak in Plausible.Auth.ApiKey,
                   where: ak.user_id == parent_as(:team_membership).user_id,
-                  where: "sites:provision:*" in ak.scopes
+                  where: fragment("? LIKE ?", ak.scopes, "%\"sites:provision:*\"%")
               )
         )
 

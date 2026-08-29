@@ -8,7 +8,7 @@ config :bcrypt_elixir, :log_rounds, 4
 
 config :plausible, Plausible.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: 10,
+  pool_size: 5,
   journal_mode: :wal,
   busy_timeout: 5000
 
@@ -67,3 +67,5 @@ config :plausible, Plausible.InstallationSupport.Checks.VerifyInstallation,
 config :plausible, Plausible.Session.Salts, interval: :timer.hours(1)
 
 config :plausible, max_goals_per_site: 10
+
+config :ex_unit, max_cases: 1

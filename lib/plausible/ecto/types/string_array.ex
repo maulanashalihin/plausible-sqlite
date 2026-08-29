@@ -6,7 +6,7 @@ defmodule Plausible.Ecto.Types.StringArray do
 
   use Ecto.Type
 
-  def type, do: :string
+  def type, do: {:array, :string}
 
   def cast(list) when is_list(list), do: {:ok, list}
   def cast(value) when is_binary(value), do: {:ok, [value]}
