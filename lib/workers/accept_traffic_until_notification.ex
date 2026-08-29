@@ -41,7 +41,7 @@ defmodule Plausible.Workers.AcceptTrafficUntil do
             id: u.id,
             email: u.email,
             deadline: t.accept_traffic_until,
-            site_ids: fragment("array_agg(?.id)", s),
+            site_ids: fragment("group_concat(?.id)", s),
             name: u.name,
             team: t
           },
@@ -76,6 +76,11 @@ defmodule Plausible.Workers.AcceptTrafficUntil do
     end
 
     {:ok, Enum.count(notifications)}
+  end
+
+  defp has_stats?(site_ids, today) when is_binary(site_ids) do
+    ids = site_ids |> String.split(",", trim: true) |> Enum.map(&String.to_integer/1)
+    has_stats?(ids, today)
   end
 
   defp has_stats?(site_ids, today) do

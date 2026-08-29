@@ -100,7 +100,7 @@ defmodule Plausible.Segments do
                   WHEN lower(?) = lower(?) THEN 0                    -- exact match
                   WHEN lower(?) LIKE lower(?) || '%' THEN 1          -- starts with
                   WHEN lower(?) LIKE '% ' || lower(?) || '%' THEN 2  -- after a space
-                  WHEN lower(?) ILIKE ? THEN 3                        -- anywhere
+                  WHEN lower(?) LIKE lower(?) THEN 3                        -- anywhere
                 END AS match_rank",
                 segment.name,
                 ^input,

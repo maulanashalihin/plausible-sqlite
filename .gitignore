@@ -99,3 +99,13 @@ plausible-report.xml
 plausible_db*
 
 .claude
+
+# SQLite (plausible-sqlite fork)
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+plausible.db
+plausible_dev.db
+plausible_dev.sqlite3
