@@ -20,6 +20,8 @@ defmodule Plausible.Stats.Time do
     {first, last}
   end
 
+  defp beginning_of_time(candidate, nil), do: candidate
+
   defp beginning_of_time(candidate, native_stats_start_at) do
     if NaiveDateTime.after?(native_stats_start_at, candidate) do
       native_stats_start_at
