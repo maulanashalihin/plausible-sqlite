@@ -252,9 +252,9 @@ defmodule Plausible.Auth do
           a
           | type:
               fragment(
-                "CASE WHEN ? = ANY(?) THEN ? ELSE ? END",
-                "sites:provision:*",
+                "CASE WHEN ? LIKE ? THEN ? ELSE ? END",
                 a.scopes,
+                "%\"sites:provision:*\"%",
                 "sites_api",
                 "stats_api"
               )
