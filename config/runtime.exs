@@ -487,109 +487,23 @@ if config_env() in [:ce, :ce_dev, :ce_test] do
   end
 end
 
-db_maybe_ipv6 =
-  if get_bool_from_path_or_env(config_dir, "ECTO_IPV6") do
-    if config_env() in [:ce, :ce_dev, :ce_test] do
-      Logger.warning(
-        "ECTO_IPV6 is no longer necessary as all TCP connections now try IPv6 automatically with IPv4 fallback"
-      )
-    end
+database_path =
+  get_var_from_path_or_env(config_dir, "DATABASE_PATH") ||
+    case config_env() do
+      env when env in [:dev, :test, :ce_dev, :ce_test, :e2e_test, :load] ->
+        "plausible_#{config_env()}.sqlite3"
 
-    [:inet6]
-  else
-    []
-  end
-
-db_url =
-  get_var_from_path_or_env(
-    config_dir,
-    "DATABASE_URL",
-    "postgres://postgres:postgres@plausible_db:5432/plausible_db"
-  )
-
-if db_socket_dir = get_var_from_path_or_env(config_dir, "DATABASE_SOCKET_DIR") do
-  Logger.warning("""
-  DATABASE_SOCKET_DIR is deprecated, please use DATABASE_URL instead:
-
-      DATABASE_URL=postgresql://postgres:postgres@#{URI.encode_www_form(db_socket_dir)}/plausible_db
-
-  or
-
-      DATABASE_URL=postgresql:///plausible_db?host=#{db_socket_dir}"
-
-  """)
-end
-
-db_cacertfile = get_var_from_path_or_env(config_dir, "DATABASE_CACERTFILE")
-%URI{host: db_host} = db_uri = URI.parse(db_url)
-db_socket_dir? = String.starts_with?(db_host, "%2F") or db_host == ""
-
-if db_socket_dir? do
-  [database] = String.split(db_uri.path, "/", trim: true)
-
-  socket_dir =
-    if db_host == "" do
-      db_host = (db_uri.query || "") |> URI.decode_query() |> Map.get("host")
-      db_host || raise ArgumentError, "DATABASE_URL=#{db_url} doesn't include host info"
-    else
-      URI.decode_www_form(db_host)
-    end
-
-  config :plausible, Plausible.Repo,
-    socket_dir: socket_dir,
-    database: database
-
-  if userinfo = db_uri.userinfo do
-    [username, password] = String.split(userinfo, ":")
-
-    config :plausible, Plausible.Repo,
-      username: username,
-      password: password
-  end
-else
-  config :plausible, Plausible.Repo, url: db_url
-
-  unless Enum.empty?(db_maybe_ipv6) do
-    config :plausible, Plausible.Repo, socket_options: db_maybe_ipv6
-  end
-
-  db_query = URI.decode_query(db_uri.query || "")
-  # https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS
-  pg_sslmode = db_query["sslmode"]
-
-  pg_ssl =
-    cond do
-      db_cacertfile ->
-        [cacertfile: db_cacertfile, verify: :verify_peer]
-
-      pg_sslmode == "verify-full" ->
-        if pg_sslrootcert = db_query["sslrootcert"] do
-          [cacertfile: pg_sslrootcert, verify: :verify_peer]
+      _ ->
+        if data_dir do
+          Path.join(data_dir, "plausible.db")
         else
           raise ArgumentError,
-                "PostgreSQL SSL mode `sslmode=#{pg_sslmode}` requires a certificate, set it in `sslrootcert`"
+                "DATABASE_PATH configuration option is required. " <>
+                  "Set it to a writable filesystem path for the SQLite database file."
         end
-
-      pg_sslmode == "verify-ca" ->
-        [cacerts: :public_key.cacerts_get(), verify: :verify_peer]
-
-      pg_sslmode == "require" ->
-        [verify: :verify_none]
-
-      pg_sslmode == "disable" ->
-        false
-
-      pg_sslmode ->
-        raise ArgumentError,
-              "PostgreSQL SSL mode `sslmode=#{pg_sslmode}` is not supported, use `disable`, `require`, `verify-ca` or `verify-full` instead"
-
-      true ->
-        # tls is disabled by default, because in self-hosted docker compose postgres is co-located
-        false
     end
 
-  config :plausible, Plausible.Repo, ssl: pg_ssl
-end
+config :plausible, Plausible.Repo, database: database_path
 
 sentry_app_version = runtime_metadata[:version] || app_version
 
@@ -895,6 +809,7 @@ thirty_days_in_seconds = 60 * 60 * 24 * 30
 if config_env() in [:prod, :ce, :load] do
   config :plausible, Oban,
     repo: Plausible.Repo,
+    engine: Oban.Engines.Lite,
     plugins: [
       # Keep 30 days history
       {Oban.Plugins.Pruner, max_age: thirty_days_in_seconds},
@@ -905,10 +820,11 @@ if config_env() in [:prod, :ce, :load] do
       {Oban.Plugins.Reindexer, schedule: "0 1 * * *"}
     ],
     queues: if(cron_enabled, do: queues, else: []),
-    peer: if(cron_enabled, do: Oban.Peers.Postgres, else: false)
+    peer: if(cron_enabled, do: Oban.Peers.Isolated, else: false)
 else
   config :plausible, Oban,
     repo: Plausible.Repo,
+    engine: Oban.Engines.Lite,
     queues: queues
 end
 

@@ -32,8 +32,8 @@ defmodule Plausible.Workers.SendSiteSetupEmails do
               select: true
           ),
         where:
-          u.inserted_at > fragment("(now() at time zone 'utc') - '72 hours'::interval") and
-            u.inserted_at < fragment("(now() at time zone 'utc') - '48 hours'::interval")
+          u.inserted_at > fragment("datetime('now', '-72 hours')") and
+            u.inserted_at < fragment("datetime('now', '-48 hours')")
 
     for user <- Repo.all(q) do
       send_create_site_email(user)
@@ -46,7 +46,7 @@ defmodule Plausible.Workers.SendSiteSetupEmails do
         left_join: se in "setup_help_emails",
         on: se.site_id == s.id,
         where: is_nil(se.id),
-        where: s.inserted_at > fragment("(now() at time zone 'utc') - '72 hours'::interval"),
+        where: s.inserted_at > fragment("datetime('now', '-72 hours')"),
         preload: [:owners, :team]
       )
 
@@ -68,7 +68,7 @@ defmodule Plausible.Workers.SendSiteSetupEmails do
         on: se.site_id == s.id,
         where: is_nil(se.id),
         inner_join: t in assoc(s, :team),
-        where: s.inserted_at > fragment("(now() at time zone 'utc') - '72 hours'::interval"),
+        where: s.inserted_at > fragment("datetime('now', '-72 hours')"),
         preload: [:owners, team: t]
       )
 

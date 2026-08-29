@@ -107,7 +107,7 @@ defmodule Plausible.Auth.UserSessions do
   def get_by_token(token) do
     now = NaiveDateTime.utc_now(:second)
 
-    last_team_subscription_query = Plausible.Teams.last_subscription_join_query()
+    last_team_subscription_query = Plausible.Teams.last_subscription_per_team_query()
 
     token_query =
       from(us in Auth.UserSession,
@@ -118,8 +118,8 @@ defmodule Plausible.Auth.UserSessions do
         left_join: t in assoc(tm, :team),
         as: :team,
         left_join: o in assoc(t, :owners),
-        left_lateral_join: ts in subquery(last_team_subscription_query),
-        on: true,
+        left_join: ts in subquery(last_team_subscription_query),
+        on: ts.team_id == t.id,
         where: us.token == ^token,
         order_by: t.id,
         preload: [user: {u, team_memberships: {tm, team: {t, subscription: ts, owners: o}}}]

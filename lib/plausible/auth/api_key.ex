@@ -43,7 +43,7 @@ defmodule Plausible.Auth.ApiKey do
 
   schema "api_keys" do
     field :name, :string
-    field :scopes, {:array, :string}, default: ["stats:read:*"]
+    field :scopes, Plausible.Ecto.Types.StringArray, default: ["stats:read:*"]
 
     field :type, :string, virtual: true
 

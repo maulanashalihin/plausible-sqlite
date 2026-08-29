@@ -13,22 +13,22 @@ defmodule Plausible.Workers.CheckUsage do
 
   defmacro yesterday() do
     quote do
-      fragment("now() - INTERVAL '1 day'")
+      fragment("datetime('now', '-1 day')")
     end
   end
 
   defmacro last_day_of_month(day) do
     quote do
-      fragment(
-        "(date_trunc('month', ?::date) + interval '1 month' - interval '1 day')::date",
-        unquote(day)
-      )
+        fragment(
+          "date(date('now', 'start of month', '+1 month', '-1 day'), ?)",
+          unquote(day)
+        )
     end
   end
 
   defmacro day_of_month(date) do
     quote do
-      fragment("EXTRACT(day from ?::date)", unquote(date))
+      fragment("CAST(strftime('%d', ?) AS INTEGER)", unquote(date))
     end
   end
 

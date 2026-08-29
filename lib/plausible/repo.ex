@@ -1,7 +1,7 @@
 defmodule Plausible.Repo do
   use Ecto.Repo,
     otp_app: :plausible,
-    adapter: Ecto.Adapters.Postgres
+    adapter: Ecto.Adapters.SQLite3
 
   use Plausible.Audit.Repo
 

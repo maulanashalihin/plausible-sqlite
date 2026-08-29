@@ -312,6 +312,23 @@ defmodule Plausible.Teams do
     )
   end
 
+  @doc """
+  SQLite-compatible alternative to `last_subscription_join_query/0`.
+  Returns the latest subscription per team using a correlated subquery
+  instead of `parent_as` (which requires LATERAL JOIN, unsupported by SQLite).
+  """
+  @spec last_subscription_per_team_query() :: Ecto.Query.t()
+  def last_subscription_per_team_query() do
+    from(s in Plausible.Billing.Subscription,
+      where:
+        fragment(
+          "? = (SELECT s2.id FROM subscriptions s2 WHERE s2.team_id = ? ORDER BY s2.inserted_at DESC, s2.id DESC LIMIT 1)",
+          s.id,
+          s.team_id
+        )
+    )
+  end
+
   @spec last_subscription_query() :: Ecto.Query.t()
   def last_subscription_query() do
     from(subscription in Plausible.Billing.Subscription,

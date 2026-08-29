@@ -62,7 +62,7 @@ defmodule Plausible.DataMigration.SiteImports do
         as: :site,
         select: %{id: s.id, imported_data: s.imported_data},
         where:
-          not is_nil(s.imported_data) and fragment("?->>'status'", s.imported_data) == "ok" and
+          not is_nil(s.imported_data) and fragment("json_extract(?, '$.status')", s.imported_data) == "ok" and
             not exists(site_import_query)
       )
       |> Repo.all(log: false)

@@ -21,8 +21,8 @@ defmodule Plausible.CustomerSupport.Resource.Team do
         inner_join: o in assoc(t, :owners),
         limit: ^limit,
         where: not is_nil(t.trial_expiry_date),
-        left_lateral_join: s in subquery(Teams.last_subscription_join_query()),
-        on: true,
+        left_join: s in subquery(Teams.last_subscription_per_team_query()),
+        on: s.team_id == t.id,
         order_by: [desc: :id],
         preload: [owners: o, subscription: s]
       )
@@ -63,14 +63,14 @@ defmodule Plausible.CustomerSupport.Resource.Team do
     q =
       if opts[:with_subscription_only?] do
         from(t in q,
-          inner_lateral_join: s in subquery(Teams.last_subscription_join_query()),
-          on: true,
+          inner_join: s in subquery(Teams.last_subscription_per_team_query()),
+          on: s.team_id == t.id,
           preload: [subscription: s]
         )
       else
         from(t in q,
-          left_lateral_join: s in subquery(Teams.last_subscription_join_query()),
-          on: true,
+          left_join: s in subquery(Teams.last_subscription_per_team_query()),
+          on: s.team_id == t.id,
           preload: [subscription: s]
         )
       end

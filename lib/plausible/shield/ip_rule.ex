@@ -9,14 +9,14 @@ defmodule Plausible.Shield.IPRule do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "shield_rules_ip" do
-    belongs_to :site, Plausible.Site
-    field :inet, EctoNetwork.INET
-    field :action, Ecto.Enum, values: [:deny, :allow], default: :deny
-    field :description, :string
-    field :added_by, :string
+    belongs_to(:site, Plausible.Site)
+    field(:inet, :string)
+    field(:action, Ecto.Enum, values: [:deny, :allow], default: :deny)
+    field(:description, :string)
+    field(:added_by, :string)
 
     # If `from_cache?` is set, the struct might be incomplete - see `Plausible.Site.Shield.Rules.IP.Cache`
-    field :from_cache?, :boolean, virtual: true, default: false
+    field(:from_cache?, :boolean, virtual: true, default: false)
     timestamps()
   end
 
@@ -32,8 +32,18 @@ defmodule Plausible.Shield.IPRule do
 
   defp disallow_netmask(changeset, field) do
     case get_field(changeset, field) do
-      %Postgrex.INET{netmask: netmask} when netmask != 32 and netmask != 128 ->
-        add_error(changeset, field, "netmask unsupported")
+      inet when is_binary(inet) ->
+        case String.split(inet, "/", parts: 2) do
+          [_ip, netmask] ->
+            if netmask not in ["32", "128"] do
+              add_error(changeset, field, "netmask unsupported")
+            else
+              changeset
+            end
+
+          [_ip] ->
+            changeset
+        end
 
       _ ->
         changeset

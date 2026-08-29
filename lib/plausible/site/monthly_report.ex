@@ -3,7 +3,7 @@ defmodule Plausible.Site.MonthlyReport do
   import Ecto.Changeset
 
   schema "monthly_reports" do
-    field :recipients, {:array, :string}
+    field :recipients, Plausible.Ecto.Types.StringArray
     belongs_to :site, Plausible.Site
 
     timestamps()

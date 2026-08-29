@@ -1,4 +1,4 @@
-.PHONY: help install server clickhouse clickhouse-prod clickhouse-stop clickhouse-postgres-remote postgres postgres-client postgres-prod postgres-stop
+.PHONY: help install server clickhouse clickhouse-prod clickhouse-stop clickhouse-postgres-remote postgres-client postgres-prod postgres-stop
 
 require = \
 	  $(foreach 1,$1,$(__require))
@@ -11,7 +11,6 @@ help:
 
 install: ## Run the initial setup
 	mix deps.get
-	mix ecto.create
 	mix ecto.migrate
 	mix download_country_database
 	npm install --prefix assets
@@ -47,7 +46,7 @@ postgres: ## Start a container with a recent version of postgres
 postgres-client: ## Connect to postgres
 	docker exec -it plausible_db psql -U postgres -d plausible_dev
 
-postgres-prod: ## Start a container with the same version of postgres as the one in prod
+postgres-prod: ## Start a container with the same version of postgres as in prod
 	docker run $(PG_FLAGS) --volume=plausible_db_prod:/var/lib/postgresql/docker postgres:18
 
 postgres-stop: ## Stop and remove the postgres container

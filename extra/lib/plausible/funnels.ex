@@ -93,7 +93,7 @@ defmodule Plausible.Funnels do
         where: f.site_id == ^site.id,
         group_by: f.id,
         order_by: [desc: :id],
-        select: %{name: f.name, id: f.id, steps_count: count(steps)}
+        select: %{name: f.name, id: f.id, steps_count: count(steps.id)}
       )
 
     Repo.all(q)

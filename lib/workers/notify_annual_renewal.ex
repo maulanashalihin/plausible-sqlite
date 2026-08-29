@@ -18,7 +18,7 @@ defmodule Plausible.Workers.NotifyAnnualRenewal do
     sent_notification =
       from(
         s in "sent_renewal_notifications",
-        where: s.timestamp > fragment("now() - INTERVAL '1 month'")
+        where: s.timestamp > fragment("datetime('now', '-1 month')")
       )
 
     teams =
@@ -34,8 +34,8 @@ defmodule Plausible.Workers.NotifyAnnualRenewal do
           where: is_nil(sent.id),
           where: s.paddle_plan_id in @yearly_plans,
           where:
-            s.next_bill_date > fragment("now()::date") and
-              s.next_bill_date <= fragment("now()::date + INTERVAL '7 days'"),
+            s.next_bill_date > fragment("date('now')") and
+              s.next_bill_date <= fragment("date('now', '+7 days')"),
           preload: [owners: o, subscription: s, billing_members: bm]
       )
 

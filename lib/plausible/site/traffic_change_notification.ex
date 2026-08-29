@@ -7,7 +7,7 @@ defmodule Plausible.Site.TrafficChangeNotification do
 
   # legacy table name since traffic drop notifications were introduced
   schema "spike_notifications" do
-    field :recipients, {:array, :string}
+    field :recipients, Plausible.Ecto.Types.StringArray
     field :threshold, :integer
     field :last_sent, :naive_datetime
     field :type, Ecto.Enum, values: [:spike, :drop], default: :spike

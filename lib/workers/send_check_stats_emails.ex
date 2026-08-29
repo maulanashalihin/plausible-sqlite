@@ -10,9 +10,9 @@ defmodule Plausible.Workers.SendCheckStatsEmails do
         on: ce.user_id == u.id,
         where: is_nil(ce.id),
         where:
-          u.inserted_at > fragment("(now() at time zone 'utc') - '14 days'::interval") and
-            u.inserted_at < fragment("(now() at time zone 'utc') - '7 days'::interval") and
-            u.last_seen < fragment("(now() at time zone 'utc') - '7 days'::interval")
+          u.inserted_at > fragment("datetime('now', '-14 days')") and
+            u.inserted_at < fragment("datetime('now', '-7 days')") and
+            u.last_seen < fragment("datetime('now', '-7 days')")
       )
 
     for user <- Repo.all(q) do

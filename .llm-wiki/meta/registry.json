@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-08-29T06:11:41.157Z",
+  "pages": {
+    "sources/undefined": {
+      "type": "source",
+      "title": "\"undefined\"",
+      "created": "2026-08-29",
+      "updated": "2026-08-29",
+      "slug": "undefined",
+      "status": "insight"
+    },
+    "sources/obs-2026-08-29-plausible-sqlite-fork-sqlite-schema-consolidation-and-asset-": {
+      "type": "source",
+      "title": "\"Observation: plausible-sqlite fork: SQLite schema consolidation and asset pipeline\"",
+      "created": "2026-08-29",
+      "updated": "2026-08-29",
+      "slug": "obs-2026-08-29-plausible-sqlite-fork-sqlite-schema-consolidation-and-asset-",
+      "status": "observation",
+      "relevance": "high",
+      "observed_at": "2026-08-29T06:11:41.140Z",
+      "tags": [
+        "plausible",
+        "elixir",
+        "sqlite",
+        "phoenix",
+        "assets",
+        "tracker",
+        "e2e",
+        "ci",
+        "docker"
+      ],
+      "source_context": "\"Research task: scripts, frontend assets, docs, contributor workflow in plausible-sqlite\""
+    },
+    "sources/obs-2026-08-29-plausible-dual-database-architecture": {
+      "type": "source",
+      "title": "\"Observation: Plausible dual-database architecture\"",
+      "created": "2026-08-29",
+      "updated": "2026-08-29",
+      "slug": "obs-2026-08-29-plausible-dual-database-architecture",
+      "status": "observation",
+      "relevance": "undefined",
+      "observed_at": "2026-08-29T05:37:16.849Z"
+    }
+  }
+}

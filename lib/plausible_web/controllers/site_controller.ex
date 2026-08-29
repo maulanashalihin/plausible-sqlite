@@ -539,7 +539,7 @@ defmodule PlausibleWeb.SiteController do
         from(j in Oban.Job,
           where:
             j.queue == "analytics_imports" and
-              fragment("(? ->> 'import_id')::int", j.args) == ^site_import.id
+            fragment("CAST(json_extract(?, '$.import_id') AS INTEGER)", j.args) == ^site_import.id
         )
       )
 
@@ -566,7 +566,7 @@ defmodule PlausibleWeb.SiteController do
         from(j in Oban.Job,
           where:
             j.queue == "analytics_imports" and
-              fragment("(? ->> 'import_id')::int", j.args) in ^import_ids
+            fragment("CAST(json_extract(?, '$.import_id') AS INTEGER)", j.args) in ^import_ids
         )
       )
 

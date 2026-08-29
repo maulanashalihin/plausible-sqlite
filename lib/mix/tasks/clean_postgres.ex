@@ -1,5 +1,6 @@
 defmodule Mix.Tasks.CleanPostgres do
   @moduledoc false
+  @shortdoc "Truncate all tables in the SQLite database"
 
   use Mix.Task
 
@@ -12,18 +13,15 @@ defmodule Mix.Tasks.CleanPostgres do
       {:error, _} = error -> throw(error)
     end
 
-    query = """
-    SELECT tablename
-    FROM pg_catalog.pg_tables
-    WHERE schemaname != 'pg_catalog' AND
-        schemaname != 'information_schema';
-    """
+    %{rows: rows} =
+      Repo.query!(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+      )
 
-    %{rows: rows} = Repo.query!(query)
     tables = Enum.map(rows, fn [table] -> table end)
 
     Enum.each(tables -- ["schema_migrations"], fn table ->
-      Repo.query!("truncate #{table} cascade")
+      Repo.query!("DELETE FROM #{table}")
     end)
   after
     Plausible.Repo.stop(500)

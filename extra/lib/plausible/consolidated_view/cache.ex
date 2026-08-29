@@ -38,7 +38,7 @@ defmodule Plausible.ConsolidatedView.Cache do
       order_by: [desc: sc.id],
       select: %{
         consolidated_view_id: sc.domain,
-        site_ids: fragment("array_agg(? ORDER BY ? DESC)", sr.id, sr.id)
+        site_ids: fragment("group_concat(?, ',')", sr.id)
       }
   end
 
@@ -60,7 +60,7 @@ defmodule Plausible.ConsolidatedView.Cache do
         order_by: [desc: sc.id],
         select: %{
           consolidated_view_id: sc.domain,
-          site_ids: fragment("array_agg(? ORDER BY ? DESC)", sr.id, sr.id)
+          site_ids: fragment("group_concat(?, ',')", sr.id)
         }
 
     refresh(
@@ -81,9 +81,19 @@ defmodule Plausible.ConsolidatedView.Cache do
   @impl true
   def unwrap_cache_keys(items) do
     Enum.reduce(items, [], fn row, acc ->
-      [{row.consolidated_view_id, row.site_ids} | acc]
+      [{row.consolidated_view_id, parse_site_ids(row.site_ids)} | acc]
     end)
   end
+
+  defp parse_site_ids(ids) when is_list(ids), do: ids
+
+  defp parse_site_ids(ids) when is_binary(ids) do
+    ids
+    |> String.split(",", trim: true)
+    |> Enum.map(&String.to_integer/1)
+  end
+
+  defp parse_site_ids(nil), do: []
 
   def get(key, opts) do
     case super(key, opts) do

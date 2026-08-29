@@ -10,7 +10,7 @@ defmodule Plausible.Release do
   @app :plausible
   @start_apps [
     :ssl,
-    :postgrex,
+    :exqlite,
     :ch,
     :ecto
   ]

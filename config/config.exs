@@ -68,10 +68,7 @@ config :plausible, Plausible.ClickhouseRepo, loggers: [Ecto.LogEntry]
 
 config :plausible, Plausible.Repo,
   timeout: 300_000,
-  connect_timeout: 300_000,
-  handshake_timeout: 300_000,
-  queue_target: 500,
-  queue_inerval: 1100
+  pool_size: 10
 
 config :plausible, Plausible.Cache, enabled: true
 

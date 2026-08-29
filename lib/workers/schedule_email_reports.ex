@@ -22,7 +22,7 @@ defmodule Plausible.Workers.ScheduleEmailReports do
         j in Oban.Job,
         where:
           j.worker == "Plausible.Workers.SendEmailReport" and
-            fragment("(? ->> 'interval')", j.args) == "weekly"
+            fragment("json_extract(?, '$.interval')", j.args) == "weekly"
       )
 
     sites =
@@ -33,7 +33,7 @@ defmodule Plausible.Workers.ScheduleEmailReports do
           on: wr.site_id == s.id,
           left_join: job in subquery(weekly_jobs),
           on:
-            fragment("(? -> 'site_id')::int", job.args) == s.id and
+            fragment("CAST(json_extract(?, '$.site_id') AS INTEGER)", job.args) == s.id and
               job.state not in ["completed", "discarded"],
           where: is_nil(job),
           where: not t.locked,
@@ -63,7 +63,7 @@ defmodule Plausible.Workers.ScheduleEmailReports do
         j in Oban.Job,
         where:
           j.worker == "Plausible.Workers.SendEmailReport" and
-            fragment("(? ->> 'interval')", j.args) == "monthly"
+            fragment("json_extract(?, '$.interval')", j.args) == "monthly"
       )
 
     sites =
@@ -74,7 +74,7 @@ defmodule Plausible.Workers.ScheduleEmailReports do
           on: mr.site_id == s.id,
           left_join: job in subquery(monthly_jobs),
           on:
-            fragment("(? -> 'site_id')::int", job.args) == s.id and
+            fragment("CAST(json_extract(?, '$.site_id') AS INTEGER)", job.args) == s.id and
               job.state not in ["completed", "discarded"],
           where: is_nil(job),
           where: not t.locked,

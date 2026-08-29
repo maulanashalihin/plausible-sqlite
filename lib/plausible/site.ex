@@ -20,7 +20,7 @@ defmodule Plausible.Site do
     field :stats_start_date, :date
     field :native_stats_start_at, :naive_datetime
     field :onboarding_status, Ecto.Enum, values: @onboarding_statuses, default: :completed
-    field :allowed_event_props, {:array, :string}
+    field :allowed_event_props, Plausible.Ecto.Types.StringArray
     field :conversions_enabled, :boolean, default: true
     field :props_enabled, :boolean, default: true
     field :funnels_enabled, :boolean, default: true

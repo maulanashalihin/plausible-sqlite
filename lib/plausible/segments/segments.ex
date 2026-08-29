@@ -231,7 +231,7 @@ defmodule Plausible.Segments do
       from(
         s in Segment,
         where: s.site_id == ^site.id,
-        where: fragment("?['filters']::text ~ ?", s.segment_data, ^goal_filter_regex)
+        where: fragment("json_extract(?, '$.filters') LIKE ?", s.segment_data, ^goal_filter_regex)
       )
 
     stale_goal_name = stale_goal.display_name
